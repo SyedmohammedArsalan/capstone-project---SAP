@@ -123,15 +123,10 @@ A browser will open automatically. Now you can:
 
 ---
 
-## 📸 Demo Screenshot (Optional)
-
-_Add a screenshot or gif here to show how it works!_
-
----
 
 ## 🧑‍💻 Author
 
-- [@yourusername](https://github.com/yourusername)
+- [@syedmohammedarsalanghori](https://github.com/syed Mohammed Arsalan)
 
 ---
 
