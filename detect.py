@@ -1,24 +1,30 @@
-from ultralytics import YOLO
-import cv2
-import os
+from transformers import pipeline
+from PIL import Image
 
-model = YOLO("yolov8n.pt")  # Nano model, fast and light
+# Initialize Detector
+detector = pipeline(
+    "object-detection",
+    model="facebook/detr-resnet-50",
+    device_map="auto"
+)
 
-def detect_clothes(image_path):
-    results = model(image_path)
-    detections = results[0].boxes.data.cpu().numpy()
-
-    if not os.path.exists("cropped"):
-        os.makedirs("cropped")
-
-    image = cv2.imread(image_path)
-    items = []
-
-    for i, det in enumerate(detections):
-        x1, y1, x2, y2, conf, cls = map(int, det[:6])
-        cropped = image[y1:y2, x1:x2]
-        filename = f"cropped/item_{i}.jpg"
-        cv2.imwrite(filename, cropped)
-        items.append(filename)
-
-    return items
+def detect_clothes(image):
+    """Detect clothing items with enhanced accuracy"""
+    results = detector(image)
+    
+    detected_items = []
+    for result in results:
+        if result['label'] in ['shirt', 'dress', 'pants', 'shoe']:
+            detected_items.append({
+                "label": result['label'],
+                "score": result['score'],
+                "box": result['box'],
+                "image": image.crop((
+                    result['box']['xmin'],
+                    result['box']['ymin'],
+                    result['box']['xmax'],
+                    result['box']['ymax']
+                ))
+            })
+    
+    return detected_items
